@@ -265,6 +265,9 @@ main.post {
   border: none;
   padding: 0; }
 
+.article-entry .highlight tr {
+  border: 0; }
+
 .article-entry .highlight figcaption {
   font-size: 0.85em;
   color: #999;
