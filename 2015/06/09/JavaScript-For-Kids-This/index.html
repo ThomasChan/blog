@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>JavaScript For Kids - This | 追客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/blog/favicon.ico">
+  <link rel="stylesheet" href="/blog/css/app.css" type="text/css">
+  <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'>
+</head>
+
+<body>
+  <nav class="app-nav">
+  <a href="/blog/about">about</a>
+  <a href="/blog/archives">archive</a>
+  <a class="home" href="/">home</a>
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/blog/2015/06/09/JavaScript-For-Kids-This/">JavaScript For Kids - This</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">June 09 2015</p>
+  </section>
+
+  <section class="article-entry">
+    <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://github.com/getify/You-Dont-Know-JS/blob/master/this%20&amp;%20object%20prototypes/README.md#you-dont-know-js-this--object-prototypes" target="_blank" rel="external">You dont know JavaScript - This</a> chapter</p>
+<h2 id="2_Misconception"><a href="#2_Misconception" class="headerlink" title="2 Misconception"></a>2 Misconception</h2><h3 id="Itself"><a href="#Itself" class="headerlink" title="Itself"></a>Itself</h3><p>第一个普遍错误就是认为<code>this</code>是指向这个<code>function</code>本身。举个例子:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.count++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo.count = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">  foo();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(foo.count); <span class="comment">// not 5 but 0</span></span><br></pre></td></tr></table></figure></p>
+<p>这样的话，有没有其他办法可以解决呢？如果不用<code>this</code>的话，我们可以新创建一个对象。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  data.count++;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> data = &#123;</span><br><span class="line">  count: <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// same to the example above</span></span><br></pre></td></tr></table></figure></p>
+<p>还有一个解决方法,直接用<code>foo</code>他本身。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  foo.count++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>虽然上面２种方法都解决了问题，但是他们都逃避了<code>this</code>。这不是我们想要的。　　<br>再来看下面的解决方法: 使用<code>call</code>。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">  foo.call(foo);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Its_Scope"><a href="#Its_Scope" class="headerlink" title="Its Scope"></a>Its Scope</h3><p>还有一个误解就是认为<code>this</code>指向这个函数的作用域。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> loved = <span class="literal">true</span>;</span><br><span class="line">  bar();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">bar</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.loved);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo(); <span class="comment">// ReferenceError: loved is not defined</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="What_is_this"><a href="#What_is_this" class="headerlink" title="What is this"></a>What is this</h2><p>事实上<code>this</code>并不是在函数定义的就绑定好的(<strong>author-time binding</strong>)，而是在函数调用的时候才绑定好(<strong>runtime binding</strong>)</p>
+<p>也就是说，<code>this</code>的值跟函数的定义一毛钱的关系都没有，而是取决于函数是在哪里被调用的(<strong>call-site</strong>)<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  bar() <span class="comment">// call-site for bar</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo()  <span class="comment">// call-site for 'foo'</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="4_Rules"><a href="#4_Rules" class="headerlink" title="4 Rules"></a>4 Rules</h2><p>上面说了<code>this</code>的值取决与函数的call-site。因此，我们总结了４种<strong>invoke pattern</strong>(not define pattern)</p>
+<h3 id="Default_Binding"><a href="#Default_Binding" class="headerlink" title="Default Binding"></a>Default Binding</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.loved);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> loved = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">foo(); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<p>从上面的例子可以看出，<code>this</code>是指向<code>global object</code>(or <code>window</code>)。也就是说，当一个函数以<strong>函数名加括号</strong>(<code>foo()</code>)的这个形式被调用的话，他的<code>this</code>就指向<code>globol object</code>。</p>
+<p>P.S.如果在严格模式下, <code>this</code>的值会是<code>undefined</code>而不是<code>global object</code>。</p>
+<h3 id="Implicit_Binding"><a href="#Implicit_Binding" class="headerlink" title="Implicit Binding"></a>Implicit Binding</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.loved);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> ex = &#123;</span><br><span class="line">  loved: <span class="literal">true</span>,</span><br><span class="line">  foo: foo</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">ex.foo();  <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<p>如果是调用一个对象的方法的话，<code>this</code>就隐式地指向这个对象本身。所以上面的<code>this</code>指向<code>ex</code>对象。并且是指向离他最近的对象，就近原则。所以下面的例子<code>this</code>是指向<code>next</code>而不是<code>ex</code>。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ex = &#123;</span><br><span class="line">  loved: <span class="literal">true</span>,</span><br><span class="line">  next: &#123;</span><br><span class="line">    loved: <span class="literal">false</span>,</span><br><span class="line">    foo: foo</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">ex.next.foo(); <span class="comment">// not true but false</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>但，这个隐式绑定有可能会出现意外</strong>。尤其是传给一个callback function的时候。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.loved);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> ex = &#123;</span><br><span class="line">  loved: <span class="literal">true</span>,</span><br><span class="line">  foo: foo</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">window</span>.loved = <span class="literal">false</span>;</span><br><span class="line">setTimeout(ex.foo, <span class="number">100</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure></p>
+<p>其实<code>setTiemout</code>的函数是这样的:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">setTimeout</span>(<span class="params">fn, delay</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// something</span></span><br><span class="line">  fn();  <span class="comment">// call-site !!!</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>由于<code>fn()</code>这种invoke pattern属于第一种，所以他是绑定到<code>global object</code>。</p>
+<p>虽然<code>this</code>的值是符合我们所讲的，但是这并不是我想要的东西，因为我想打印出就是<code>ex.loved</code>这个field，而不是<code>global object</code>。</p>
+<h3 id="Explicit_Binding"><a href="#Explicit_Binding" class="headerlink" title="Explicit Binding"></a>Explicit Binding</h3><p>我们将会使用到<code>call</code>, <code>apply</code>和<code>bind</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.loved);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> ex = &#123;</span><br><span class="line">  loved: <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo.call(ex); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<p>那么，我们要怎样解决上面那个问题呢？我们需要<strong>hard binding</strong>。<br>我们需要用另外一个函数来作为wrapper，<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">bar</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  foo.call(ex);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bar(); <span class="comment">// true</span></span><br><span class="line">setTimeout(bar, <span class="number">100</span>); <span class="comment">// true</span></span><br><span class="line">bar.call(<span class="built_in">window</span>); <span class="comment">// true</span></span><br></pre></td></tr></table></figure></p>
+<p>因为<em>hard binding</em>经常用，所以ES5提供了一个方法: <code>bind()</code>。因此，我们可以这样:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> bar = foo.bind(ex);</span><br><span class="line">setTimeout(bar, <span class="number">100</span>); <span class="comment">// true</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="New_Binding"><a href="#New_Binding" class="headerlink" title="New Binding"></a>New Binding</h3><p>当一个函数在调用的时候前面有个<code>new</code> keyword，<code>this</code>就被绑定到这个constructed object。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Ex</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.loved = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> ex = <span class="keyword">new</span> Ex();</span><br><span class="line"><span class="built_in">console</span>.log(ex.loved);</span><br></pre></td></tr></table></figure></p>
+<p>既然<code>this</code>怎么麻烦，为什么就不能简单一点啊？</p>
+<h2 id="Arrow_function"><a href="#Arrow_function" class="headerlink" title="Arrow function"></a>Arrow function</h2><p>在<code>=&gt;</code>中，<code>this</code>是绑定在<strong>lexical scope</strong>，也就是<code>this</code>取决于函数在哪里定义，而不是函数在哪里调用。并且，<code>this</code>一旦决定是不会改变的，也就是说<code>call</code>, <code>bind</code>这些方法都不起作用了。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ex = &#123;</span><br><span class="line">  loved: <span class="literal">true</span>,</span><br><span class="line"></span><br><span class="line">  foo() &#123;</span><br><span class="line">    setTimeout(() =&gt; &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="keyword">this</span>.loved);</span><br><span class="line">    &#125;, <span class="number">10.24</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ex.foo(); <span class="comment">// true</span></span><br></pre></td></tr></table></figure></p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/blog/images/avatar.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> 追客 </p>
+      <p class="subtitle"> 热爱生活，热爱编程，Web前端见习魔法师 </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <p> share it if you like it~ </p>
+    <!-- <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text= id="Reference"><a h"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+ -->
+  </section>
+</div>
+
+
+  
+    
+<section class="article-comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+<script>
+  var disqus_shortname = 'drakeleung';
+  
+  var disqus_url = 'http://drakeleung.github.io/blog/2015/06/09/JavaScript-For-Kids-This/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+  
+</main>
+
+</body>
+</html>
