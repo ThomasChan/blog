@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Programming is cooooool ^_Q</title>
+  <title>Drake Leung(追客)</title>
   
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="http://drakeleung.github.io/blog/"/>
-  <updated>2016-02-11T17:18:33.424Z</updated>
+  <updated>2016-02-17T17:29:50.709Z</updated>
   <id>http://drakeleung.github.io/blog/</id>
   
   <author>
@@ -14,6 +14,60 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>为你的JavaScript代码写测试</title>
+    <link href="http://drakeleung.github.io/blog/2016/02/17/%E4%B8%BA%E4%BD%A0%E7%9A%84JavaScript%E4%BB%A3%E7%A0%81%E5%86%99%E6%B5%8B%E8%AF%95/"/>
+    <id>http://drakeleung.github.io/blog/2016/02/17/为你的JavaScript代码写测试/</id>
+    <published>2016-02-17T11:32:51.000Z</published>
+    <updated>2016-02-17T17:29:50.709Z</updated>
+    
+    <content type="html">&lt;p&gt;下面会讲解如何使用 karama, jasmine 以及 webpack，来为我们的 ES6 代码编写测试。&lt;br&gt;（最后我写了一个可用的例子，请查看 &lt;a href=&quot;https://github.com/DrakeLeung/ES2015-Starter-Kit/tree/master&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;ES2015-Starter-Kit&lt;/a&gt; ）&lt;/p&gt;
+&lt;h2 id=&quot;u8270_u96BE_u7684_u6289_u62E9&quot;&gt;&lt;a href=&quot;#u8270_u96BE_u7684_u6289_u62E9&quot; class=&quot;headerlink&quot; title=&quot;艰难的抉择&quot;&gt;&lt;/a&gt;艰难的抉择&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;首先，我们要写测试，用什么写？自己写一个函数，还是使用某个测试框架？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;看起来，后者可观一点。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;然后，有哪些测试框架可以选择？选哪个？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;于是，我们 google 之，找到 stackoverflow 的一个问题 &lt;a href=&quot;http://stackoverflow.com/questions/300855/javascript-unit-test-tools-for-tdd&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;JavaScript unit test tools for TDD&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;看了问题回答，很纠结，太多了不知道选择哪个！最后，我决定选择 &lt;a href=&quot;https://karma-runner.github.io/0.13/index.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Karma&lt;/a&gt;, &lt;a href=&quot;https://github.com/jasmine/jasmine&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Jasmine&lt;/a&gt; 和 &lt;a href=&quot;http://mochajs.org/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Mocha&lt;/a&gt; 这三者之一，根据 Star 数量以及维护团队。&lt;/p&gt;
+&lt;img src=&quot;/blog/2016/02/17/为你的JavaScript代码写测试/0.png&quot; alt=&quot;0.png&quot; title=&quot;&quot;&gt;
+&lt;blockquote&gt;
+&lt;p&gt;那么，&lt;em&gt;Karma&lt;/em&gt;, &lt;em&gt;Jasmine&lt;/em&gt; 以及 &lt;em&gt;Mocha&lt;/em&gt; 这三者之间哪个好，有什么不同？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;于是，我们不妨 google，找到了 &lt;a href=&quot;http://stackoverflow.com/questions/24391462/what-are-the-differences-between-mocha-chai-karma-jasmine-should-js-etc-te&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;What are the differences between mocha, chai, karma, jasmine, should.js, etc. testing frameworks?&lt;/a&gt; 这个问题。&lt;/p&gt;
+&lt;p&gt;从回答中我们可以知道：&lt;em&gt;Karma&lt;/em&gt; 只是一个 test runner，他负责提供 environment。而 &lt;em&gt;Jasmine&lt;/em&gt; 和 &lt;em&gt;Mocha&lt;/em&gt; 是编写测试脚本的框架。也就是说，我们可以选择 &lt;em&gt;Karma + Jasmine&lt;/em&gt;或者 &lt;em&gt;Karma + Mocha&lt;/em&gt;。我们不妨先选择前者~&lt;/p&gt;
+&lt;p&gt;综上所述，&lt;strong&gt;我们要使用 &lt;em&gt;Karma + Jasmine&lt;/em&gt; 组合来为我们的 JavaScript 代码写测试&lt;/strong&gt;。&lt;/p&gt;
+&lt;h2 id=&quot;u6218_u6597_u7684_u53F7_u89D2&quot;&gt;&lt;a href=&quot;#u6218_u6597_u7684_u53F7_u89D2&quot; class=&quot;headerlink&quot; title=&quot;战斗的号角&quot;&gt;&lt;/a&gt;战斗的号角&lt;/h2&gt;&lt;p&gt;接下来，我们根据文档（&lt;a href=&quot;https://karma-runner.github.io/0.13/intro/installation.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;karma - Installation&lt;/a&gt;, &lt;a href=&quot;https://karma-runner.github.io/0.13/intro/configuration.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;karma - Configuration&lt;/a&gt; 和 &lt;a href=&quot;http://jasmine.github.io/2.0/introduction.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Jasmine - introduction&lt;/a&gt;），很容易就能搞起来。&lt;/p&gt;
+&lt;p&gt;在这里我想说的是：当编写多个测试脚本的时候，你也许可以使用 &lt;code&gt;beforeEach&lt;/code&gt; 和 &lt;code&gt;afterEach&lt;/code&gt;。他们分别会在每个测试（spec）的之前和之后执行一次。&lt;/p&gt;
+&lt;h2 id=&quot;u526F_u672C&quot;&gt;&lt;a href=&quot;#u526F_u672C&quot; class=&quot;headerlink&quot; title=&quot;副本&quot;&gt;&lt;/a&gt;副本&lt;/h2&gt;&lt;p&gt;最后还有一个问题是&lt;em&gt;如何结合 &lt;a href=&quot;http://webpack.github.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Webpack&lt;/a&gt;&lt;/em&gt; 来为我们的ES6代码编写测试。&lt;/p&gt;
+&lt;p&gt;我不得不承认，这是一个很不错的问题。然而，我也通过google找到了答案。&lt;/p&gt;
+&lt;p&gt;详细教程请看 &lt;em&gt;VueJS&lt;/em&gt; 的 &lt;a href=&quot;https://vuejs.github.io/vue-loader/workflow/testing.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Testing&lt;/a&gt; 文档。&lt;/p&gt;
+&lt;h2 id=&quot;u6218_u6597_u7684_u8363_u8000&quot;&gt;&lt;a href=&quot;#u6218_u6597_u7684_u8363_u8000&quot; class=&quot;headerlink&quot; title=&quot;战斗的荣耀&quot;&gt;&lt;/a&gt;战斗的荣耀&lt;/h2&gt;&lt;p&gt;你可以为你的仓库弄一个亮晶晶的 &lt;a href=&quot;https://docs.travis-ci.com/user/status-images/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;travis ci status image&lt;/a&gt;：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://travis-ci.org/travis-ci/travis-web.svg?branch=master&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;详细设置请查看 &lt;a href=&quot;https://docs.travis-ci.com/user/getting-started/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;travis docs&lt;/a&gt;以及这篇教程 &lt;a href=&quot;http://www.sitepoint.com/testing-javascript-jasmine-travis-karma/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Testing JavaScript with Jasmine, Travis, and Karma&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;最后，如果还是不懂的话，可以查看我写的一个例子：&lt;a href=&quot;https://github.com/DrakeLeung/ES2015-Starter-Kit/tree/master&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;ES2015-Starter-Kit&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;Resources&quot;&gt;&lt;a href=&quot;#Resources&quot; class=&quot;headerlink&quot; title=&quot;Resources&quot;&gt;&lt;/a&gt;Resources&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://stackoverflow.com/questions/300855/javascript-unit-test-tools-for-tdd&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;JavaScript unit test tools for TDD&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://stackoverflow.com/questions/24391462/what-are-the-differences-between-mocha-chai-karma-jasmine-should-js-etc-te&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;What are the differences between mocha, chai, karma, jasmine, should.js, etc. testing frameworks?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://vuejs.github.io/vue-loader/workflow/testing.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;vuejs - Testing&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.sitepoint.com/testing-javascript-jasmine-travis-karma/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Testing JavaScript with Jasmine, Travis, and Karma&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;下面会讲解如何使用 karama, jasmine 以及 webpack，来为我们的 ES6 代码编写测试。&lt;br&gt;（最后我写了一个可用的例子，请查看 &lt;a href=&quot;https://github.com/DrakeLeung/ES2015-Starter-Kit/tre
+    
+    </summary>
+    
+    
+      <category term="JavaScript" scheme="http://drakeleung.github.io/blog/tags/JavaScript/"/>
+    
+      <category term="test" scheme="http://drakeleung.github.io/blog/tags/test/"/>
+    
+  </entry>
   
   <entry>
     <title>实现一个简单的 AMD 模块加载器</title>
