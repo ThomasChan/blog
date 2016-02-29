@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>JavaScript For Kids - This | 追客</title>
+  <title>笨方法学 JavaScript - This 关键字 | 追客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <link rel="shortcut icon" href="/blog/favicon.ico">
   <link rel="stylesheet" href="/blog/css/app.css" type="text/css">
@@ -35,7 +35,7 @@
   <main class="post">
   <article>
   <h1 class="article-title">
-    <a href="/blog/2015/06/09/JavaScript-For-Kids-This/">JavaScript For Kids - This</a>
+    <a href="/blog/2015/06/09/JavaScript-For-Kids-This/">笨方法学 JavaScript - This 关键字</a>
   </h1>
 
   <section class="article-meta">
@@ -43,8 +43,7 @@
   </section>
 
   <section class="article-entry">
-    <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://github.com/getify/You-Dont-Know-JS/blob/master/this%20&amp;%20object%20prototypes/README.md#you-dont-know-js-this--object-prototypes" target="_blank" rel="external">You dont know JavaScript - This</a> chapter</p>
-<h2 id="2_Misconception"><a href="#2_Misconception" class="headerlink" title="2 Misconception"></a>2 Misconception</h2><h3 id="Itself"><a href="#Itself" class="headerlink" title="Itself"></a>Itself</h3><p>第一个普遍错误就是认为<code>this</code>是指向这个<code>function</code>本身。举个例子:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.count++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo.count = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">  foo();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(foo.count); <span class="comment">// not 5 but 0</span></span><br></pre></td></tr></table></figure></p>
+    <h2 id="2__u4E2A_u5E38_u89C1_u7684_u8BEF_u89E3"><a href="#2__u4E2A_u5E38_u89C1_u7684_u8BEF_u89E3" class="headerlink" title="2 个常见的误解"></a>2 个常见的误解</h2><p>第一个普遍错误就是认为<code>this</code>是指向这个<code>function</code>本身。举个例子:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.count++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo.count = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">  foo();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(foo.count); <span class="comment">// not 5 but 0</span></span><br></pre></td></tr></table></figure></p>
 <p>这样的话，有没有其他办法可以解决呢？如果不用<code>this</code>的话，我们可以新创建一个对象。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  data.count++;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> data = &#123;</span><br><span class="line">  count: <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// same to the example above</span></span><br></pre></td></tr></table></figure></p>
 <p>还有一个解决方法,直接用<code>foo</code>他本身。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  foo.count++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>虽然上面２种方法都解决了问题，但是他们都逃避了<code>this</code>。这不是我们想要的。　　<br>再来看下面的解决方法: 使用<code>call</code>。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">  foo.call(foo);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -68,13 +67,14 @@
 <h3 id="New_Binding"><a href="#New_Binding" class="headerlink" title="New Binding"></a>New Binding</h3><p>当一个函数在调用的时候前面有个<code>new</code> keyword，<code>this</code>就被绑定到这个constructed object。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Ex</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.loved = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> ex = <span class="keyword">new</span> Ex();</span><br><span class="line"><span class="built_in">console</span>.log(ex.loved);</span><br></pre></td></tr></table></figure></p>
 <p>既然<code>this</code>怎么麻烦，为什么就不能简单一点啊？</p>
 <h2 id="Arrow_function"><a href="#Arrow_function" class="headerlink" title="Arrow function"></a>Arrow function</h2><p>在<code>=&gt;</code>中，<code>this</code>是绑定在<strong>lexical scope</strong>，也就是<code>this</code>取决于函数在哪里定义，而不是函数在哪里调用。并且，<code>this</code>一旦决定是不会改变的，也就是说<code>call</code>, <code>bind</code>这些方法都不起作用了。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ex = &#123;</span><br><span class="line">  loved: <span class="literal">true</span>,</span><br><span class="line"></span><br><span class="line">  foo() &#123;</span><br><span class="line">    setTimeout(() =&gt; &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="keyword">this</span>.loved);</span><br><span class="line">    &#125;, <span class="number">10.24</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ex.foo(); <span class="comment">// true</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://github.com/getify/You-Dont-Know-JS/blob/master/this%20&amp;%20object%20prototypes/README.md#you-dont-know-js-this--object-prototypes" target="_blank" rel="external">You dont know JavaScript - This</a> chapter</p>
 
   </section>
 </article>
 
   <div class="sharing grid">
   <section class="profile grid-item grid">
-    <img class="avatar" src="/blog/images/avatar.png" alt="avatar" />
+    <img class="avatar" src="http://7xrcp8.com1.z0.glb.clouddn.com/avatar.png" alt="avatar" />
     <div class="grid-item">
       <p class="title"> 追客 </p>
       <p class="subtitle"> You are the JavaScript in my HTML </p>
@@ -87,7 +87,7 @@
   class="twitter-share-button"
   data-size="large"
   data-via="DrakeLeung"
-  href="https://twitter.com/intent/tweet?text= id="Reference"><a h"
+  href="https://twitter.com/intent/tweet?text= id="2__u4E2A_u5E38_"
 >
   Tweet
 </a>

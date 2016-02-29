@@ -39,9 +39,26 @@ a {
 .app-header {
   text-align: center; }
   .app-header .banner {
-    height: 450px;
-    background-image: url(../images/banner.png);
-    background-size: cover; }
+    position: relative;
+    overflow: hidden;
+    z-index: -1024;
+    background-color: #f6f6f6;
+    background-size: cover;
+    background-repeat: no-repeat; }
+    .app-header .banner .placeholder {
+      padding-bottom: 33.3%; }
+    .app-header .banner img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      opacity: 0;
+      transition: opacity 2s linear; }
+    .app-header .banner img.loaded {
+      opacity: 1; }
+    .app-header .banner .banner-small {
+      filter: blur(50px);
+      -webkit-filter: blur(25px); }
   .app-header .description .avatar {
     width: 100px;
     height: 100px;
