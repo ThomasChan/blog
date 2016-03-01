@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Medium 是如何加载图片的？ | 追客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/blog/favicon.ico">
+  <link rel="stylesheet" href="/blog/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+      
+        <a class="active" href="/blog/.">home</a>
+        
+
+      
+  
+      
+        <a href="/blog/archives">archive</a>
+      
+  
+      
+        <a href="/blog/about">about</a>
+      
+  
+      
+        <a href="/blog/atom.xml">rss</a>
+      
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/blog/2016/03/01/How-Medium-Load-Images/">Medium 是如何加载图片的？</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">March 01 2016</p>
+  </section>
+
+  <section class="article-entry">
+    <h2 id="What"><a href="#What" class="headerlink" title="What"></a>What</h2><p>首先，我们来看看 Medium 加载图片的效果是怎样子的：</p>
+<div class="video-container"><iframe src="//player.vimeo.com/video/157258221" frameborder="0" allowfullscreen></iframe></div>
+<p>我的<a href="http://drakeleung.github.io/blog/">博客首页</a>也实现了这种效果。下面我们就分析如何实现。</p>
+<h2 id="How"><a href="#How" class="headerlink" title="How"></a>How</h2><p>我们随便打开 Medium 中有图片的<a href="https://medium.com/tag/javascript" target="_blank" rel="external">页面</a>，然后 <em>审查元素</em>，就可以得到：</p>
+<img src="/blog/2016/03/01/How-Medium-Load-Images/inspect.png" alt="inspect.png" title="">
+<p>简化之后得到：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">section</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"placeholder"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"prossiveMedia"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">img</span> <span class="attribute">class</span>=<span class="value">"img-samll"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">canvas</span>&gt;</span><span class="tag">&lt;/<span class="title">canvas</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">img</span> <span class="attribute">class</span>=<span class="value">"img-large"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">section</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>实现的过程大致如下：</p>
+<ol>
+<li>使用一个 <code>placeholder</code> 来防止图片 <em>collapse</em>。</li>
+<li>先加载一个很小的图片</li>
+<li>当这个小图片加载完毕之后，把他画在 <code>&lt;canvas&gt;</code> 里面，然后把图片弄模糊。</li>
+<li>当大图片加载完毕之后，显示他。</li>
+</ol>
+<h2 id="Do_it"><a href="#Do_it" class="headerlink" title="Do it"></a>Do it</h2><p>首先，HTML 结构如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">section</span> <span class="attribute">class</span>=<span class="value">"banner"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"placeholder"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">img</span></span><br><span class="line">    <span class="attribute">class</span>=<span class="value">"img-small"</span></span><br><span class="line">    <span class="attribute">src</span>=<span class="value">"https://cdn-images-1.medium.com/freeze/max/27/1*sg-uLNm73whmdOgKlrQdZA.jpeg?q=20"</span></span><br><span class="line">    <span class="attribute">data-large</span>=<span class="value">"https://cdn-images-1.medium.com/max/1800/1*sg-uLNm73whmdOgKlrQdZA.jpeg"</span></span><br><span class="line">   &gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">section</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>.placeholder</code> 是用来撑起 <code>.banner</code> 的高度。因为如果我们想要让两张图片重叠的话，会用到 <code>position: absolute</code>，定位元素会脱离文档流，那么 <code>.banner</code> 的高度就会为 <code>0</code>。</p>
+<p><code>.img-small</code> 首先加载的是小图片。大图片的 URL 放在了 <code>data-large</code> 属性里面。</p>
+<p>接下来是，CSS部分：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">.banner</span> <span class="rules">&#123;</span><br><span class="line">  <span class="rule"><span class="attribute">position</span>:<span class="value"> relative</span></span>;</span><br><span class="line">  <span class="rule"><span class="attribute">overflow</span>:<span class="value"> hidden</span></span>;</span><br><span class="line">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="class">.placeholder</span> <span class="rules">&#123;</span><br><span class="line">  <span class="rule"><span class="attribute">padding-bottom</span>:<span class="value"> <span class="number">66.6%</span></span></span>;</span><br><span class="line">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">img</span> <span class="rules">&#123;</span><br><span class="line">  <span class="rule"><span class="attribute">position</span>:<span class="value"> absolute</span></span>;</span><br><span class="line">  <span class="rule"><span class="attribute">top</span>:<span class="value"> <span class="number">0</span></span></span>;</span><br><span class="line">  <span class="rule"><span class="attribute">left</span>:<span class="value"> <span class="number">0</span></span></span>;</span><br><span class="line">  <span class="rule"><span class="attribute">width</span>:<span class="value"> <span class="number">100%</span></span></span>;</span><br><span class="line">  <span class="rule"><span class="attribute">opacity</span>:<span class="value"> <span class="number">0</span></span></span>;</span><br><span class="line">  <span class="rule"><span class="attribute">transition</span>:<span class="value"> opacity <span class="number">1s</span> linear</span></span>;</span><br><span class="line">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">img</span><span class="class">.loaded</span> <span class="rules">&#123;</span><br><span class="line">  <span class="rule"><span class="attribute">opacity</span>:<span class="value"> <span class="number">1</span></span></span>;</span><br><span class="line">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="class">.img-small</span> <span class="rules">&#123;</span><br><span class="line">  <span class="rule"><span class="attribute">filter</span>:<span class="value"> <span class="function">blur</span>(<span class="number">50px</span>)</span></span>;</span><br><span class="line">  <span class="rule"><span class="attribute">-webkit-filter</span>:<span class="value"> <span class="function">blur</span>(<span class="number">50px</span>)</span></span>;</span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure>
+<p><code>.banner</code> 设置了 <code>relative</code>，所以他成为了他 children (<code>.placeholder</code>, <code>img</code>) 的 <em>containning block</em> 了。</p>
+<p>注意到，<code>.placeholder</code> 设置了 <code>padding-bottom: 66.6%</code>。<code>66.6%</code> 是相对于他的 <em>containning block</em> 的宽度，也就是 <code>.banner</code> 的宽度。<br>这个值应该和 <code>img</code> 的高度一样，这样一来，<code>.banner</code> 的高度就是 <code>img</code> 的高度了。</p>
+<p>利用 <code>transition</code> 让透明度变化有个渐变效果。</p>
+<p>实现模糊效果是使用了 <code>filter: blur()</code>，而没有使用 <code>&lt;canvas&gt;</code>。</p>
+<p>然后，JavaScript 代码部分比较简单：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> app = (() =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> imgSmall = <span class="built_in">document</span>.querySelector(<span class="string">'.img-small'</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> loadImage = () =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> img = <span class="keyword">new</span> Image()</span><br><span class="line"></span><br><span class="line">    img.src = imgSmall.src</span><br><span class="line">    img.addEventListener(<span class="string">'load'</span>, (e) =&gt; &#123;</span><br><span class="line">      imgSmall.classList.add(<span class="string">'loaded'</span>)</span><br><span class="line">    &#125;, <span class="literal">false</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> imgLarge = <span class="keyword">new</span> Image()</span><br><span class="line"></span><br><span class="line">    imgLarge.src = imgSmall.dataset.large</span><br><span class="line">    imgLarge.addEventListener(<span class="string">'load'</span>, (e) =&gt; &#123;</span><br><span class="line">      imgLarge.classList.add(<span class="string">'loaded'</span>)</span><br><span class="line">    &#125;, <span class="literal">false</span>)</span><br><span class="line"></span><br><span class="line">    imgSmall.parentNode.appendChild(imgLarge)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    loadImage</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;)()</span><br><span class="line"></span><br><span class="line">app.loadImage()</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，我们不能直接监听 <code>.img-small</code> 的 <code>load</code> 事件，要 <code>new Image</code>，然后赋予其 <code>src</code>，然后我们就可以监听他的 <code>load</code> 事件了。</p>
+<p>最后，为了凸显效果，我们要禁止缓存和设置较差的网络环境。具体做法如图：</p>
+<img src="/blog/2016/03/01/How-Medium-Load-Images/network.png" alt="network.png" title="">
+<p>实际效果如下：<br><iframe width="100%" height="300" src="http://jsfiddle.net/5sLzjk99/embedded/js,resources,html,css,result/light" frameborder="0" allowfullscreen></iframe></p>
+<h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul>
+<li><a href="https://jmperezperez.com/medium-image-progressive-loading-placeholder/" target="_blank" rel="external">How Medium does progressive image loading</a></li>
+</ul>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="http://7xrcp8.com1.z0.glb.clouddn.com/avatar.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> 追客 </p>
+      <p class="subtitle"> You are the JavaScript in my HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <p> share it if you like it~ </p>
+    <!-- <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text= id="What"><a href=""
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+ -->
+  </section>
+</div>
+
+
+  
+    
+<section class="article-comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+<script>
+  var disqus_shortname = 'drakeleung';
+  
+  var disqus_url = 'http://drakeleung.github.io/blog/2016/03/01/How-Medium-Load-Images/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+  
+</main>
+
+</body>
+</html>
