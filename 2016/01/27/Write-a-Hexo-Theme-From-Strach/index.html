@@ -35,7 +35,7 @@
   <main class="post">
   <article>
   <h1 class="article-title">
-    <a href="/blog/2016/01/27/从零开始编写一个Hexo主题/">从零开始编写一个Hexo主题</a>
+    <a href="/blog/2016/01/27/Write-a-Hexo-Theme-From-Strach/">从零开始编写一个Hexo主题</a>
   </h1>
 
   <section class="article-meta">
@@ -43,7 +43,7 @@
   </section>
 
   <section class="article-entry">
-    <p>之前我也不会写，但是当我了解以下东西的时候，就可以从零开始写一个Hexo主题了。<br><img src="/blog/2016/01/27/从零开始编写一个Hexo主题/hexo2.png" alt="hexo2.png" title=""></p>
+    <p>之前我也不会写，但是当我了解以下东西的时候，就可以从零开始写一个Hexo主题了。<br></p>
 <ul>
 <li>NodeJS / NPM</li>
 <li>模板引擎(Template Engine)，比如EJS, Jade，Handlebars等等都可以</li>
@@ -56,7 +56,7 @@
 <p>OK，这就是我们需要知道的NodeJS和NPM的知识。</p>
 <h2 id="Hexo_u7684Workflow"><a href="#Hexo_u7684Workflow" class="headerlink" title="Hexo的Workflow"></a>Hexo的Workflow</h2><p><strong>下面是重点。</strong></p>
 <p>Hexo会读取根目录下的<code>_config.yml</code>里面的<code>theme</code>属性, 从而采用对应的主题。而主题都是放在<code>themes/</code>目录下面的，然后你会发现他里面有个<code>landscape</code>的目录，这个就是默认主题啦。</p>
-<img src="/blog/2016/01/27/从零开始编写一个Hexo主题/hexo1.png" alt="theme workflow" title="theme workflow">
+
 <p>接着，我们查看<code>themes/landscape/</code>目录，以及根据文档<a href="https://hexo.io/docs/themes.html" target="_blank" rel="external">docs-themes</a>，我们很容易得出：一个主题其实由4部分组成。</p>
 <ul>
 <li><code>_config.yml</code>: 主题的配置文件</li>
@@ -93,7 +93,7 @@
 </tr>
 </tbody>
 </table>
-<p>如下图所示:<br><img src="/blog/2016/01/27/从零开始编写一个Hexo主题/hexo.png" alt="template workflow" title="template workflow"></p>
+<p>如下图所示:<br></p>
 <p>或者，可以先尝试一下没有<code>layout.ejs</code>的情况，因为比较简单。也就是，访问<code>/</code>，Hexo就返回<code>index.ejs</code>里面的东西给你。访问<code>/archives</code>就返回<code>archive.ejs</code>。</p>
 <h2 id="u6A21_u677F_u6587_u4EF6"><a href="#u6A21_u677F_u6587_u4EF6" class="headerlink" title="模板文件"></a>模板文件</h2><p>那么，接下来就要编写我们的模板文件了。怎么写呢？<br>比如我的根目录想显示所有的文章？我们就要使用Hexo提供的<a href="https://hexo.io/docs/variables.html" target="_blank" rel="external">变量</a>了。通过文档，我们可以得出<code>page.posts</code>这个变量就包含了所有的文章。</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">%</span> <span class="attribute">page.posts.each</span>(<span class="attribute">function</span>(<span class="attribute">post</span>)&#123; %&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">article</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">h1</span>&gt;</span> post.title <span class="tag">&lt;/<span class="title">h1</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">div</span>&gt;</span> post.content <span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="title">article</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">%</span> &#125;) %&gt;</span></span><br></pre></td></tr></table></figure>
@@ -160,7 +160,7 @@
 <script>
   var disqus_shortname = 'drakeleung';
   
-  var disqus_url = 'http://drakeleung.github.io/blog/2016/01/27/从零开始编写一个Hexo主题/';
+  var disqus_url = 'http://drakeleung.github.io/blog/2016/01/27/Write-a-Hexo-Theme-From-Strach/';
   
   (function(){
     var dsq = document.createElement('script');
