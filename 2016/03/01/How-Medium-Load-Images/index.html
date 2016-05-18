@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <title>Medium 是如何加载图片的？ | 追客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <link rel="shortcut icon" href="/blog/favicon.ico">
-  <link rel="stylesheet" href="/blog/css/app.css">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
   <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
 </head>
 
@@ -13,21 +13,21 @@
   <nav class="app-nav">
   
       
-        <a class="active" href="/blog/.">home</a>
+        <a class="active" href="/.">home</a>
         
 
       
   
       
-        <a href="/blog/archives">archive</a>
+        <a href="/archives">archive</a>
       
   
       
-        <a href="/blog/about">about</a>
+        <a href="/about">about</a>
       
   
       
-        <a href="/blog/atom.xml">rss</a>
+        <a href="/atom.xml">rss</a>
       
   
 </nav>
@@ -35,7 +35,7 @@
   <main class="post">
   <article>
   <h1 class="article-title">
-    <a href="/blog/2016/03/01/How-Medium-Load-Images/">Medium 是如何加载图片的？</a>
+    <a href="/2016/03/01/How-Medium-Load-Images/">Medium 是如何加载图片的？</a>
   </h1>
 
   <section class="article-meta">
@@ -47,7 +47,7 @@
 <div class="video-container"><iframe src="//player.vimeo.com/video/157258221" frameborder="0" allowfullscreen></iframe></div>
 <p>我的<a href="http://drakeleung.github.io/blog/">博客首页</a>也实现了这种效果。下面我们就分析如何实现。</p>
 <h2 id="How"><a href="#How" class="headerlink" title="How"></a>How</h2><p>我们随便打开 Medium 中有图片的<a href="https://medium.com/tag/javascript" target="_blank" rel="external">页面</a>，然后 <em>审查元素</em>，就可以得到：</p>
-<img src="/blog/2016/03/01/How-Medium-Load-Images/inspect.png" alt="inspect.png" title="">
+<img src="/2016/03/01/How-Medium-Load-Images/inspect.png" alt="inspect.png" title="">
 <p>简化之后得到：</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">section</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"placeholder"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"prossiveMedia"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">img</span> <span class="attribute">class</span>=<span class="value">"img-samll"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">canvas</span>&gt;</span><span class="tag">&lt;/<span class="title">canvas</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">img</span> <span class="attribute">class</span>=<span class="value">"img-large"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">section</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>实现的过程大致如下：</p>
@@ -71,7 +71,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> app = (() =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> imgSmall = <span class="built_in">document</span>.querySelector(<span class="string">'.img-small'</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> loadImage = () =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> img = <span class="keyword">new</span> Image()</span><br><span class="line"></span><br><span class="line">    img.src = imgSmall.src</span><br><span class="line">    img.addEventListener(<span class="string">'load'</span>, (e) =&gt; &#123;</span><br><span class="line">      imgSmall.classList.add(<span class="string">'loaded'</span>)</span><br><span class="line">    &#125;, <span class="literal">false</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> imgLarge = <span class="keyword">new</span> Image()</span><br><span class="line"></span><br><span class="line">    imgLarge.src = imgSmall.dataset.large</span><br><span class="line">    imgLarge.addEventListener(<span class="string">'load'</span>, (e) =&gt; &#123;</span><br><span class="line">      imgLarge.classList.add(<span class="string">'loaded'</span>)</span><br><span class="line">    &#125;, <span class="literal">false</span>)</span><br><span class="line"></span><br><span class="line">    imgSmall.parentNode.appendChild(imgLarge)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    loadImage</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;)()</span><br><span class="line"></span><br><span class="line">app.loadImage()</span><br></pre></td></tr></table></figure>
 <p>需要注意的是，我们不能直接监听 <code>.img-small</code> 的 <code>load</code> 事件，要 <code>new Image</code>，然后赋予其 <code>src</code>，然后我们就可以监听他的 <code>load</code> 事件了。</p>
 <p>最后，为了凸显效果，我们要禁止缓存和设置较差的网络环境。具体做法如图：</p>
-<img src="/blog/2016/03/01/How-Medium-Load-Images/network.png" alt="network.png" title="">
+<img src="/2016/03/01/How-Medium-Load-Images/network.png" alt="network.png" title="">
 <p>实际效果如下：<br><iframe width="100%" height="300" src="http://jsfiddle.net/5sLzjk99/embedded/js,resources,html,css,result/light" frameborder="0" allowfullscreen></iframe></p>
 <h2 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h2><ul>
 <li><a href="https://jmperezperez.com/medium-image-progressive-loading-placeholder/" target="_blank" rel="external">How Medium does progressive image loading</a></li>
