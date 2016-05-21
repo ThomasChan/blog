@@ -103,8 +103,7 @@ main.index {
   main.index .article-title {
     margin: 0;
     padding-top: 30px;
-    text-transform: capitalize;
-    font-size: 1.75rem; }
+    text-transform: capitalize; }
   main.index .article-date {
     color: #aaa; }
   main.index .page-nav {
@@ -160,7 +159,6 @@ main.post {
       color: #5badf0; }
   main.post .article-title {
     margin: 0;
-    font-size: 1.75rem;
     text-align: center;
     text-transform: capitalize;
     padding-top: 30px; }
