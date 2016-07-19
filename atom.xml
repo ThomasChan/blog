@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://drakeleung.github.io/blog/"/>
-  <updated>2016-05-02T11:19:01.906Z</updated>
+  <updated>2016-07-19T13:02:36.258Z</updated>
   <id>http://drakeleung.github.io/blog/</id>
   
   <author>
@@ -14,6 +14,68 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>A Mathematical Expressions Parser</title>
+    <link href="http://drakeleung.github.io/blog/2016/07/14/a-mathematical-expressions-parser/"/>
+    <id>http://drakeleung.github.io/blog/2016/07/14/a-mathematical-expressions-parser/</id>
+    <published>2016-07-14T12:56:20.000Z</published>
+    <updated>2016-07-19T13:02:36.258Z</updated>
+    
+    <content type="html">&lt;p&gt;更多信息可查看 &lt;a href=&quot;http://drakeleung.github.io/demo/slides/calc&quot;&gt;SLIDE&lt;/a&gt; 。&lt;/p&gt;
+&lt;h2 id=&quot;u95EE_u9898&quot;&gt;&lt;a href=&quot;#u95EE_u9898&quot; class=&quot;headerlink&quot; title=&quot;问题&quot;&gt;&lt;/a&gt;问题&lt;/h2&gt;&lt;p&gt;我们的问题是这样子的：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;写一个 &lt;code&gt;calculate&lt;/code&gt; 函数，他的参数是一个四则运算表达式字符串，返回结果则是该参数的求值。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;calculate(&lt;span class=&quot;string&quot;&gt;&#39;1+2*3&#39;&lt;/span&gt;) &lt;span class=&quot;comment&quot;&gt;// 7&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;calculate(&lt;span class=&quot;string&quot;&gt;&#39;1*(2+3)*4)&#39;&lt;/span&gt;) &lt;span class=&quot;comment&quot;&gt;// 20&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;/*&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * 规则：&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * 1. 禁止 eval 及其类似物&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * 2. 禁止第三方库&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; */&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h2 id=&quot;u6700_u7B80_u5355_u7684_u601D_u8DEF&quot;&gt;&lt;a href=&quot;#u6700_u7B80_u5355_u7684_u601D_u8DEF&quot; class=&quot;headerlink&quot; title=&quot;最简单的思路&quot;&gt;&lt;/a&gt;最简单的思路&lt;/h2&gt;&lt;p&gt;假设字符串就是简单的 &lt;code&gt;1+2&lt;/code&gt;，那么最简单的想法当然是：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;遍历该字符串，然后根据不同的操作符，计算其结果，重复之。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;然而，当字符串为 &lt;code&gt;1+2*3&lt;/code&gt; 时，得到的结果是 &lt;code&gt;9&lt;/code&gt; 而不是 &lt;code&gt;7&lt;/code&gt; 。这是因为我们并没有考虑到&lt;strong&gt;操作符的优先级&lt;/strong&gt;。并且，如果加上括号（&lt;code&gt;()&lt;/code&gt;）的话，那么优先级就变得更加复杂。&lt;/p&gt;
+&lt;p&gt;所以啊，我们就想：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;能不能没有优先级，按顺序就好啦，这样就简单多了。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;u9006_u6CE2_u5170&quot;&gt;&lt;a href=&quot;#u9006_u6CE2_u5170&quot; class=&quot;headerlink&quot; title=&quot;逆波兰&quot;&gt;&lt;/a&gt;逆波兰&lt;/h2&gt;&lt;p&gt;只要努力 google 一下，我们就可以找到解决方法：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;使用「逆波兰表达式」。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;像我们平时使用的 &lt;code&gt;1 + 1&lt;/code&gt; 就叫 &lt;em&gt;中缀表达式&lt;/em&gt; 。而 &lt;em&gt;逆波兰&lt;/em&gt;（&lt;em&gt;后缀表达式&lt;/em&gt; ）则形如 &lt;code&gt;1 1 +&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;现在，我们的问题就变成了:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;怎样把「中缀表达式」转换成「逆波兰表达式」？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;Tokenizer&quot;&gt;&lt;a href=&quot;#Tokenizer&quot; class=&quot;headerlink&quot; title=&quot;Tokenizer&quot;&gt;&lt;/a&gt;Tokenizer&lt;/h2&gt;&lt;p&gt;第一步，我们需要做的是：&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;// 假设我们的字符串形如：`&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;+&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;*&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;-&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt;`&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;// 那么就要把他转换成这样的一个数组：&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;[&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#123; &lt;span class=&quot;built_in&quot;&gt;type&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&#39;number&#39;&lt;/span&gt;, value: &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt; &amp;#125;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#123; &lt;span class=&quot;built_in&quot;&gt;type&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&#39;operator&#39;&lt;/span&gt;, value: &lt;span class=&quot;string&quot;&gt;&#39;+&#39;&lt;/span&gt; &amp;#125;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#123; &lt;span class=&quot;built_in&quot;&gt;type&lt;/span&gt;: &lt;span class=&quot;string&quot;&gt;&#39;number&#39;&lt;/span&gt;, value: &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt; &amp;#125;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  ....&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;]&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;em&gt;查看代码请点击 &lt;a href=&quot;https://github.com/DrakeLeung/calc/blob/master/src/tokenizer.js&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;tokenizer&lt;/a&gt; 。&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&quot;toRPN&quot;&gt;&lt;a href=&quot;#toRPN&quot; class=&quot;headerlink&quot; title=&quot;toRPN&quot;&gt;&lt;/a&gt;toRPN&lt;/h2&gt;&lt;p&gt;第二步，我们要把得到的 tokens 转换成 &lt;em&gt;逆波兰&lt;/em&gt; 形式。这个时候需要用到 &lt;a href=&quot;/&quot;&gt;shunting-yard&lt;/a&gt; 算法。&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;查看代码请点击 &lt;a href=&quot;https://github.com/DrakeLeung/calc/blob/master/src/toRPN.js&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;toRPN&lt;/a&gt; 。&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&quot;Calculator&quot;&gt;&lt;a href=&quot;#Calculator&quot; class=&quot;headerlink&quot; title=&quot;Calculator&quot;&gt;&lt;/a&gt;Calculator&lt;/h2&gt;&lt;p&gt;第三步，也是我们最后一步。&lt;/p&gt;
+&lt;p&gt;我们需要把创建一个 &lt;strong&gt;操作数栈&lt;/strong&gt; ，如果是操作数的话，push 到栈里去；如果是操作符的话，把栈里的前两个操作数 pop 出来，计算他们和该操作符的结果。然后把结果 push 到栈里。重复之，直到遍历完所有的 tokens 。&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;查看代码请点击 &lt;a href=&quot;https://github.com/DrakeLeung/calc/blob/master/src/index.js&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;calculator&lt;/a&gt; 。&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&quot;u62BD_u8C61_u8BED_u6CD5_u6811&quot;&gt;&lt;a href=&quot;#u62BD_u8C61_u8BED_u6CD5_u6811&quot; class=&quot;headerlink&quot; title=&quot;抽象语法树&quot;&gt;&lt;/a&gt;抽象语法树&lt;/h2&gt;&lt;p&gt;其实，我们还能做些更有趣的事情。比如，构建一棵 AST 。做法其实和第三步差不多。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;创建一个 &lt;strong&gt;操作数栈&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;遍历 tokens&lt;/li&gt;
+&lt;li&gt;如果 token 为操作数，则 push 到栈里。&lt;/li&gt;
+&lt;li&gt;如果 token 为操作符，则把 栈里的两个操作数 pop 出来，与该操作符形成 AST 的一个节点，接着把该节点 push 到栈里去&lt;/li&gt;
+&lt;li&gt;重复之，直到遍历完 tokens&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;有了 AST 之后，如果我们对其分别进行前序，中序，后序遍历的话，就可以得到 &lt;strong&gt;前缀表达式&lt;/strong&gt; ，&lt;strong&gt;中缀表达式&lt;/strong&gt; ，以及 &lt;strong&gt;后缀表达式&lt;/strong&gt; 。&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;查看代码请点击 &lt;a href=&quot;https://github.com/DrakeLeung/calc/blob/master/src/parser.js&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;parser&lt;/a&gt; 。&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&quot;u9879_u76EE_u6E90_u7801&quot;&gt;&lt;a href=&quot;#u9879_u76EE_u6E90_u7801&quot; class=&quot;headerlink&quot; title=&quot;项目源码&quot;&gt;&lt;/a&gt;项目源码&lt;/h2&gt;&lt;p&gt;所有代码可查看：&lt;a href=&quot;https://github.com/DrakeLeung/calc&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/DrakeLeung/calc&lt;/a&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;更多信息可查看 &lt;a href=&quot;http://drakeleung.github.io/demo/slides/calc&quot;&gt;SLIDE&lt;/a&gt; 。&lt;/p&gt;
+&lt;h2 id=&quot;u95EE_u9898&quot;&gt;&lt;a href=&quot;#u95EE_u9898&quot; class=&quot;headerl
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>实现一个 flickr like 布局</title>
@@ -1320,39 +1382,6 @@
     
     
       <category term="scope" scheme="http://drakeleung.github.io/blog/tags/scope/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ES6 In Practice(0) - watch a demo</title>
-    <link href="http://drakeleung.github.io/blog/2015/06/18/ES6-In-Practice-0-watch-a-demo/"/>
-    <id>http://drakeleung.github.io/blog/2015/06/18/ES6-In-Practice-0-watch-a-demo/</id>
-    <published>2015-06-18T08:02:11.000Z</published>
-    <updated>2016-01-27T06:26:50.793Z</updated>
-    
-    <content type="html">&lt;p&gt;吃完半个西瓜，太饱。于是上yutube，然后搜了&lt;code&gt;es6 tutorial&lt;/code&gt;，发现了一个30k+ views的&lt;a href=&quot;https://youtu.be/iukBMY4apvI&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;JavaScript In 2015&lt;/a&gt;视频。遂看，&lt;strong&gt;收货良多&lt;/strong&gt;。&lt;/p&gt;
-&lt;h2 id=&quot;live-server&quot;&gt;&lt;a href=&quot;#live-server&quot; class=&quot;headerlink&quot; title=&quot;live-server&quot;&gt;&lt;/a&gt;live-server&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://www.npmjs.com/package/live-server&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;live-server&lt;/a&gt;这个package，可以帮助我们快速建立一个可以&lt;strong&gt;live reload&lt;/strong&gt;的静态服务器。&lt;/p&gt;
-&lt;h2 id=&quot;jspm&quot;&gt;&lt;a href=&quot;#jspm&quot; class=&quot;headerlink&quot; title=&quot;jspm&quot;&gt;&lt;/a&gt;jspm&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;http://jspm.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;jspm&lt;/a&gt;是一个package manager，可以帮助我们快速建立ES6的使用环境。让我们来看一下官方文档的&lt;a href=&quot;https://github.com/jspm/jspm-cli/wiki/Getting-Started&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;getting start&lt;/a&gt;&lt;/p&gt;
-&lt;figure class=&quot;highlight html&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;doctype&quot;&gt;&amp;lt;!doctype html&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; // 需要引入这2个js文件&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; &lt;span class=&quot;tag&quot;&gt;&amp;lt;&lt;span class=&quot;title&quot;&gt;script&lt;/span&gt; &lt;span class=&quot;attribute&quot;&gt;src&lt;/span&gt;=&lt;span class=&quot;value&quot;&gt;&quot;jspm_packages/system.js&quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;undefined&quot;&gt;&lt;/span&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;/&lt;span class=&quot;title&quot;&gt;script&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; &lt;span class=&quot;tag&quot;&gt;&amp;lt;&lt;span class=&quot;title&quot;&gt;script&lt;/span&gt; &lt;span class=&quot;attribute&quot;&gt;src&lt;/span&gt;=&lt;span class=&quot;value&quot;&gt;&quot;config.js&quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;undefined&quot;&gt;&lt;/span&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;/&lt;span class=&quot;title&quot;&gt;script&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; // 下面是我们自己的js文件&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; &lt;span class=&quot;tag&quot;&gt;&amp;lt;&lt;span class=&quot;title&quot;&gt;script&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;actionscript&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   System.&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;&#39;lib/main&#39;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; &lt;/span&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;/&lt;span class=&quot;title&quot;&gt;script&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h2 id=&quot;reddit_api&quot;&gt;&lt;a href=&quot;#reddit_api&quot; class=&quot;headerlink&quot; title=&quot;reddit api&quot;&gt;&lt;/a&gt;reddit api&lt;/h2&gt;&lt;p&gt;这里用了一个&lt;a href=&quot;https://www.npmjs.com/package/jsonp&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;jsonp&lt;/a&gt; package，来发起jsonp请求。我们使用&lt;code&gt;jspm install npm:jsonp&lt;/code&gt;来安装。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;使用reddit api&lt;/strong&gt;: 只要在每个&lt;code&gt;r&lt;/code&gt;后面加&lt;code&gt;.json&lt;/code&gt;。比如: &lt;code&gt;https://www.reddit.com/r/pics.json&lt;/code&gt;。然后还要传&lt;code&gt;param: &amp;#39;jsonp&amp;#39;&lt;/code&gt;的参数。&lt;/p&gt;
-&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;RedditApi&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  constructor() &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.redditURL = &lt;span class=&quot;string&quot;&gt;&#39;https://www.reddit.com/r/pics.json&#39;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  load() &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;Promise&lt;/span&gt;((resolve, reject) =&amp;gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      jsonp(&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;.redditURL, &amp;#123;param: &lt;span class=&quot;string&quot;&gt;&#39;jsonp&#39;&lt;/span&gt;&amp;#125;, (err, data) =&amp;gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        err ? reject(err) : resolve(data.data.children);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &amp;#125;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;说到API，突然想起&lt;a href=&quot;http://www.codecademy.com/learn&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;codeacademy&lt;/a&gt;上面好像又好多教学，赶紧去一下先。&lt;/p&gt;
-&lt;h2 id=&quot;Extract_Pictures&quot;&gt;&lt;a href=&quot;#Extract_Pictures&quot; class=&quot;headerlink&quot; title=&quot;Extract Pictures&quot;&gt;&lt;/a&gt;Extract Pictures&lt;/h2&gt;&lt;p&gt;利用&lt;code&gt;Array.map&lt;/code&gt;和&lt;code&gt;Array.filter&lt;/code&gt;来获取和过滤图片。以前一直不知道这２个函数怎么用。&lt;br&gt;&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;default&lt;/span&gt; (posts) =&amp;gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; posts&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    .map(post =&amp;gt; post.data.url)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    .filter(url =&amp;gt; &lt;span class=&quot;regexp&quot;&gt;/png$/&lt;/span&gt;.exec(url));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;h2 id=&quot;Display_Picture&quot;&gt;&lt;a href=&quot;#Display_Picture&quot; class=&quot;headerlink&quot; title=&quot;Display Picture&quot;&gt;&lt;/a&gt;Display Picture&lt;/h2&gt;&lt;p&gt;利用了&lt;code&gt;Array.map&lt;/code&gt;和&lt;code&gt;Array.json&lt;/code&gt;来生成要插入的HTML string。如果我写的话，可以会用循环 = =　果然看多别人的代码还是好的。&lt;/p&gt;
-&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;default&lt;/span&gt; (urls) =&amp;gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; pics = &lt;span class=&quot;built_in&quot;&gt;document&lt;/span&gt;.querySelector(&lt;span class=&quot;string&quot;&gt;&#39;.pics&#39;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  pics.innerHTML = urls.map(url =&amp;gt; &lt;span class=&quot;string&quot;&gt;`&amp;lt;img src=&lt;span class=&quot;subst&quot;&gt;$&amp;#123;url&amp;#125;&lt;/span&gt;&amp;gt;`&lt;/span&gt;).join(&lt;span class=&quot;string&quot;&gt;&#39;\n&#39;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;吃完半个西瓜，太饱。于是上yutube，然后搜了&lt;code&gt;es6 tutorial&lt;/code&gt;，发现了一个30k+ views的&lt;a href=&quot;https://youtu.be/iukBMY4apvI&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;J
-    
-    </summary>
-    
-      <category term="JavaScript" scheme="http://drakeleung.github.io/blog/categories/JavaScript/"/>
-    
-    
-      <category term="ES6" scheme="http://drakeleung.github.io/blog/tags/ES6/"/>
     
   </entry>
   
