@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://drakeleung.github.io/blog/"/>
-  <updated>2016-07-19T13:02:36.258Z</updated>
+  <updated>2016-08-10T16:55:59.215Z</updated>
   <id>http://drakeleung.github.io/blog/</id>
   
   <author>
@@ -14,6 +14,77 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>有趣的 Nginx</title>
+    <link href="http://drakeleung.github.io/blog/2016/08/11/Oh-My-Nginx/"/>
+    <id>http://drakeleung.github.io/blog/2016/08/11/Oh-My-Nginx/</id>
+    <published>2016-08-10T16:53:50.000Z</published>
+    <updated>2016-08-10T16:55:59.215Z</updated>
+    
+    <content type="html">&lt;p&gt;由于在开发项目的时候用到了 &lt;code&gt;nginx&lt;/code&gt; ，觉得挺不错的，所以了解了一下。&lt;/p&gt;
+&lt;p&gt;一个项目的开发环境一般都会分为4个阶段。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;test(local): 本地&lt;/li&gt;
+&lt;li&gt;alpha&lt;/li&gt;
+&lt;li&gt;beta&lt;/li&gt;
+&lt;li&gt;production&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;每个环境下，前端的域名是不同的，并且调用后台接口的 &lt;code&gt;url&lt;/code&gt; 也是不同的。假设我们的项目名字叫做 &lt;code&gt;toon&lt;/code&gt;，并且 root domain 是 &lt;code&gt;lyyourc.com&lt;/code&gt;，那么就有：&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# 前端4个环境下的域名&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-  &lt;span class=&quot;built_in&quot;&gt;test&lt;/span&gt;: toon.test.lyyourc.net&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- alpha: toon.alpha.lyyourc.net&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-  beta: toon.alpha.lyyourc.net&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-  prod: toon.lyyourc.com&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# 后台接口&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-  alpha: toon-api.alpha.lyyourc.net&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-   beta: toon-api..beta.lyyourc.net&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;-   prod: toon-api.lyyourc.com&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;那么，在这种情况下，我们应该如何：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;不同环境下，前端使用不同的域名，访问对应的后台接口呢？&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;首先，我们要解决&lt;strong&gt;前端怎么使用域名来访问我们的 web 应用&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;最简单的办法当然是&lt;strong&gt;改 hosts&lt;/strong&gt; 。应该还有其他办法，比如 &lt;a href=&quot;https://github.com/typicode/hotel&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;hotel - get local domain in seconds&lt;/a&gt; 。&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# my project - toon&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;number&quot;&gt;127.0&lt;/span&gt;.&lt;span class=&quot;number&quot;&gt;0.1&lt;/span&gt; toon.test.lyyourc.net&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;接下来，我们需要用到 nginx 作为一个 &lt;strong&gt;proxy server&lt;/strong&gt; ，把接收到请求转发到对应的后台接口。&lt;/p&gt;
+&lt;p&gt;如果你还没接触过 nginx 的话，现在就是一个好机会啦。打开 &lt;a href=&quot;http://nginx.org/en/docs/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;nginx 的官网&lt;/a&gt;，安装，看 &lt;a href=&quot;http://nginx.org/en/docs/beginners_guide.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Beginner’s Guide&lt;/a&gt; 。&lt;/p&gt;
+&lt;p&gt;下面，修改我们的 &lt;code&gt;nginx.conf&lt;/code&gt;(OSX: &lt;code&gt;/usr/local/etc/nginx/&lt;/code&gt;)&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;worker_processes  &lt;span class=&quot;number&quot;&gt;7&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;events &amp;#123; worker_connections &lt;span class=&quot;number&quot;&gt;256&lt;/span&gt;; &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;http &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  server &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;# 监听 80 端口&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    listen &lt;span class=&quot;number&quot;&gt;80&lt;/span&gt;; &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;# 域名符合：toon.*.lyyourc.net 等&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    server_name ~^toon\.(.*\.)?(lyyourc)\.net$;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    location / &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      root &lt;span class=&quot;string&quot;&gt;&quot;/Users/drake/Projects/demo/fun/nginx&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;# 只要含有 `/api/` 请求，都转发&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    location /api/ &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      proxy_pass http://toon-api.alpha.lyyourc.net;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;然后运行：&lt;code&gt;sudo nginx -s reload&lt;/code&gt;，重新读取 nginx 的配置文件。如果失败的话，会有相关的提示信息。比如下面少写了 &lt;code&gt;event&lt;/code&gt; 这个指令：&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;nginx: [emerg] no &lt;span class=&quot;string&quot;&gt;&quot;events&quot;&lt;/span&gt; section &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; configuration&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;在上面的 &lt;code&gt;nginx.conf&lt;/code&gt; 中，我们定义了：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;只要请求是来自 80 端口，域名符合，URL中包含了 &lt;code&gt;/api/&lt;/code&gt; 的，我们都转发到 &lt;code&gt;http://toon-api.alpha.lyyourc.net&lt;/code&gt; ，如果为 &lt;code&gt;/&lt;/code&gt; 的话，直接读取 &lt;code&gt;/Users/drake/Projects/demo/fun/nginx&lt;/code&gt; 目录下的 &lt;code&gt;index.html&lt;/code&gt; 。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;然后，我们前端需要做的是：&lt;strong&gt;根据当前的域名，请求对应的后台接口。&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;写一个配置文件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// host.js&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; apiHost = () =&amp;gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; items = &lt;span class=&quot;built_in&quot;&gt;window&lt;/span&gt;.location.hostname.split(&lt;span class=&quot;string&quot;&gt;&#39;.&#39;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; env = items[&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;switch&lt;/span&gt; (env) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;test&#39;&lt;/span&gt;: &lt;span class=&quot;comment&quot;&gt;// 本地开发环境 =&amp;gt; nginx&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;&#39;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;alpha&#39;&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;//toon-api.alpha.lyyourc.net&#39;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;beta&#39;&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;//toon-api.beta.lyyourc.net&#39;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;default&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;//toon-api.lyyourc.com&#39;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;每次请求的时候都带上这个 host :&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; &amp;#123; apiHost &amp;#125; &lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;host.js&#39;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;fetch(`$&amp;#123;apiHot()&amp;#125;/api/heros/&lt;span class=&quot;string&quot;&gt;`)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  .then(res =&amp;gt; res.json())&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这时就有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;前端域名为 &lt;code&gt;toon.test.lyyourc.net&lt;/code&gt; 的时候&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;apiHost&lt;/code&gt; 返回空字符串 &lt;code&gt;&amp;#39;&amp;#39;&lt;/code&gt; &lt;/li&gt;
+&lt;li&gt;访问后台接口的 URL 为 &lt;code&gt;toon.test.lyyourc.net/api/xx&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;在 &lt;code&gt;/etc/hosts&lt;/code&gt; 匹配了这个 URL ，转到 &lt;code&gt;127.0.0.1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Nginx 接收，转发到 &lt;code&gt;http://toon-api.alpha.lyyourc.net&lt;/code&gt; &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;为什么不直接在 &lt;code&gt;host.js&lt;/code&gt; 里面返回 &lt;code&gt;http://toon-api.alpha.lyyourc.net&lt;/code&gt; 呢？原因有2个我认为：1个是浏览器的同源策略而产生的&lt;strong&gt;跨域问题&lt;/strong&gt;，另1个是当我们想要测试任何环境下的后台接口，我们只需要改 &lt;code&gt;nginx.conf&lt;/code&gt; 里面的 &lt;code&gt;proxy_pass&lt;/code&gt; 就好了。&lt;/p&gt;
+&lt;p&gt;综上，&lt;strong&gt;不知道是否还有更好的解决办法呢？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;其实 nginx 还可以做很多事情啦。比如一个服务器上轻松地跑多个 App ，还有反代 google ，配置 HTTPS 等等。&lt;/p&gt;
+&lt;p&gt;Oh~ My Nginx!!&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;由于在开发项目的时候用到了 &lt;code&gt;nginx&lt;/code&gt; ，觉得挺不错的，所以了解了一下。&lt;/p&gt;
+&lt;p&gt;一个项目的开发环境一般都会分为4个阶段。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;test(local): 本地&lt;/li&gt;
+&lt;li&gt;alpha&lt;/li&gt;
+&lt;li&gt;beta&lt;/
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>A Mathematical Expressions Parser</title>
@@ -1320,68 +1391,6 @@
       <category term="scope" scheme="http://drakeleung.github.io/blog/tags/scope/"/>
     
       <category term="作用域" scheme="http://drakeleung.github.io/blog/tags/%E4%BD%9C%E7%94%A8%E5%9F%9F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Scope(0) - What Is Scope</title>
-    <link href="http://drakeleung.github.io/blog/2015/07/06/Scope-0-What-Is-Scope/"/>
-    <id>http://drakeleung.github.io/blog/2015/07/06/Scope-0-What-Is-Scope/</id>
-    <published>2015-07-06T06:51:18.000Z</published>
-    <updated>2016-01-27T06:26:27.662Z</updated>
-    
-    <content type="html">&lt;p&gt;下面我们会学习JavaScript的scope，也就是作用域．其实很简单~&lt;br&gt;在讲什么是scope之前，我们先讲讲为什么会有scope的存在．&lt;/p&gt;
-&lt;h2 id=&quot;Why&quot;&gt;&lt;a href=&quot;#Why&quot; class=&quot;headerlink&quot; title=&quot;Why&quot;&gt;&lt;/a&gt;Why&lt;/h2&gt;&lt;p&gt;我们都知道，一个程序最基本的功能就是对数据的基本操作，比如增删查改．&lt;/p&gt;
-&lt;p&gt;这个时候，我们就要用到&lt;strong&gt;变量(variable)&lt;/strong&gt;了．那么，我们怎么知道变量是存储在哪里的，我们又是怎样获取他的&lt;br&gt;值，并且修改呢？&lt;/p&gt;
-&lt;p&gt;这个时候，我们就需要一个&lt;em&gt;特殊的地方&lt;/em&gt;来存放变量，然后我们可以在这个地方&lt;br&gt;找到我们所需要的变量了．这个＊特殊的地方*就是scope．&lt;/p&gt;
-&lt;h2 id=&quot;What&quot;&gt;&lt;a href=&quot;#What&quot; class=&quot;headerlink&quot; title=&quot;What&quot;&gt;&lt;/a&gt;What&lt;/h2&gt;&lt;p&gt;知道了为什么会有scope的存在，我们就很容易知道什么叫做scope了．个人认为的话，&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;scope就是一个地方，用来存放变量的．因此，你可以通过scope来获取变量的值，&lt;br&gt;从而对这些变量进行基本的操作．&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h2 id=&quot;How_It_Works&quot;&gt;&lt;a href=&quot;#How_It_Works&quot; class=&quot;headerlink&quot; title=&quot;How It Works&quot;&gt;&lt;/a&gt;How It Works&lt;/h2&gt;&lt;p&gt;我们先来了解一些编译(compile)理论知识．&lt;/p&gt;
-&lt;p&gt;首先，&lt;strong&gt;compile&lt;/strong&gt;主要分成３个步骤．&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Lexing(Takenizing): 把一个要编译的语句分成一些有意义的taken.&lt;br&gt; 比如&lt;code&gt;var bar = 2;&lt;/code&gt;会被分成&lt;code&gt;var&lt;/code&gt;, &lt;code&gt;bar&lt;/code&gt;, &lt;code&gt;=&lt;/code&gt; &lt;code&gt;2&lt;/code&gt;．&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Parsing: 把所有的taken弄成一棵&lt;em&gt;AST&lt;/em&gt;(abstract syntax tree, 抽象语法树)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Code Generation: 生成可执行代码&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;&lt;strong&gt;我们需要明确的一点是: JavaScript的代码是”从上到下”,”一句一句”的编译然后就立马执行的.&lt;/strong&gt;&lt;br&gt;(注意我使用了双引号)&lt;/p&gt;
-&lt;p&gt;接下来,介绍3位好机油.分别是浏览器的Engine, Compiler, Scope.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Engine: 负责分配任务,以及执行代码.&lt;/li&gt;
-&lt;li&gt;Compiler: 接受Engine传递的任务,编译可执行的代码返回给Engine&lt;/li&gt;
-&lt;li&gt;Scope: 存放变量,函数声明等.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;那么,让我们通过一个例子,来看看他们是如何合作的.&lt;/p&gt;
-&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// Engine will split this statement into 2 parts:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// `var bar` and `bar = 10`.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; bar = &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;Engine: 先把&lt;code&gt;var bar&lt;/code&gt;交给Compiler.&lt;br&gt;Compiler: 问问Scope有没有声明过&lt;code&gt;bar&lt;/code&gt;这个变量.没有的话不管他,否则让Scope声明&lt;code&gt;bar&lt;/code&gt;变量.&lt;br&gt;Scope: 我这里没有&lt;code&gt;bar&lt;/code&gt;, 那我就声明吧.  &lt;/p&gt;
-&lt;p&gt;Engine: 我要开始执行&lt;code&gt;bar = 10&lt;/code&gt;啦.Scope你好,请问你那里有没有&lt;code&gt;bar&lt;/code&gt;这个变量?&lt;br&gt;Scope: 当然!刚才Compiler叫我声明了.&lt;br&gt;Engine: 既然你&lt;code&gt;bar&lt;/code&gt;的话,那我就把&lt;code&gt;10&lt;/code&gt;赋值给他咯.&lt;/p&gt;
-&lt;h2 id=&quot;Do_It&quot;&gt;&lt;a href=&quot;#Do_It&quot; class=&quot;headerlink&quot; title=&quot;Do It&quot;&gt;&lt;/a&gt;Do It&lt;/h2&gt;&lt;p&gt;通过Scope来查找变量,函数声明等等的过程叫做&lt;code&gt;identifier looking up&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;下面，我们通过一个例子，来看看怎么一回事．&lt;/p&gt;
-&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; bar;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;bar = &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;console&lt;/span&gt;.log(bar);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;在第２行代码中，我们引用了&lt;code&gt;bar&lt;/code&gt;这个变量，并给他赋值了&lt;code&gt;２&lt;/code&gt;.&lt;br&gt;此时，这种引用就叫做&lt;strong&gt;LHS&lt;/strong&gt;(left hand side),也就是等号的右边．&lt;/p&gt;
-&lt;p&gt;在第３行中，我们引用了&lt;code&gt;bar&lt;/code&gt;这个变量的值．此时，这个引用叫做&lt;strong&gt;RHS&lt;/strong&gt;(right hand side)，&lt;br&gt;也就是等号的右边，准确来说是等号的非左边．&lt;/p&gt;
-&lt;p&gt;那么，LHS和RHS有什么不同呢？&lt;/p&gt;
-&lt;p&gt;LHS只是获取变量,不在乎这个变量对应的值是什么.例子中,我们只想把&lt;code&gt;42&lt;/code&gt;赋值给&lt;code&gt;bar&lt;/code&gt;.&lt;br&gt;还有一种情况也是&lt;code&gt;LHS&lt;/code&gt;: 函数的参数.&lt;/p&gt;
-&lt;p&gt;RHS是为了获取变量的值!例子中,我们想要的就是把&lt;code&gt;bar&lt;/code&gt;这个变量对应的值打印出来.&lt;/p&gt;
-&lt;p&gt;RHS如果在scope中找不到这个变量,那么就会报错: &lt;code&gt;Reference Error&lt;/code&gt;.而LHS则会给&lt;code&gt;window&lt;/code&gt;&lt;br&gt;这个全局变量添加一个属性,如果在没有使用&lt;code&gt;use strict&lt;/code&gt;的情况下.比如:&lt;br&gt;&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// &#39;use strict;&#39;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;foo = &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;console&lt;/span&gt;.log(foo);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;在上面的例子中,很明显在scope中是找不到&lt;code&gt;foo&lt;/code&gt;这个变量的.&lt;br&gt;又由于他是LHS,所有就会有&lt;code&gt;window.foo = 10;&lt;/code&gt;我们可以通过&lt;code&gt;console.log(window.hasOwnProperty(&amp;#39;foo&amp;#39;))&lt;/code&gt;来测试一下.&lt;/p&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;下面我们会学习JavaScript的scope，也就是作用域．其实很简单~&lt;br&gt;在讲什么是scope之前，我们先讲讲为什么会有scope的存在．&lt;/p&gt;
-&lt;h2 id=&quot;Why&quot;&gt;&lt;a href=&quot;#Why&quot; class=&quot;headerlink&quot; title=&quot;Why&quot;&gt;
-    
-    </summary>
-    
-      <category term="JavaScript" scheme="http://drakeleung.github.io/blog/categories/JavaScript/"/>
-    
-    
-      <category term="scope" scheme="http://drakeleung.github.io/blog/tags/scope/"/>
     
   </entry>
   
