@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://drakeleung.github.io/blog/"/>
-  <updated>2016-08-10T16:55:59.215Z</updated>
+  <updated>2016-08-14T16:27:05.626Z</updated>
   <id>http://drakeleung.github.io/blog/</id>
   
   <author>
@@ -14,6 +14,54 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>fetch api 用起来！</title>
+    <link href="http://drakeleung.github.io/blog/2016/08/15/fetch-api-now/"/>
+    <id>http://drakeleung.github.io/blog/2016/08/15/fetch-api-now/</id>
+    <published>2016-08-14T16:16:49.000Z</published>
+    <updated>2016-08-14T16:27:05.626Z</updated>
+    
+    <content type="html">&lt;p&gt;今天把 vue-resource 砍掉，换成了 &lt;a href=&quot;http://devdocs.io/dom/globalfetch/fetch&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;fetch&lt;/a&gt; 。&lt;br&gt;然而，代码体积在 build 之后只是少了 2K =。=&lt;/p&gt;
+&lt;p&gt;为了兼容旧浏览器，我们将使用这个的 polyfill : &lt;a href=&quot;https://github.com/github/fetch&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;whatwg-fetch&lt;/a&gt; ；如果还想兼容 node 的话：&lt;a href=&quot;https://github.com/matthew-andrews/isomorphic-fetch&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;isomorphic-fetch&lt;/a&gt; 。安装请看对应的文档。&lt;/p&gt;
+&lt;h2 id=&quot;fetch_api&quot;&gt;&lt;a href=&quot;#fetch_api&quot; class=&quot;headerlink&quot; title=&quot;fetch api&quot;&gt;&lt;/a&gt;fetch api&lt;/h2&gt;&lt;p&gt;最简单的 &lt;code&gt;fetch&lt;/code&gt; 接口是下面这样子的：&lt;/p&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;/**&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * fetch&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; *&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * @param &amp;#123;string&amp;#125; url &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * @param &amp;#123;object&amp;#125; config&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; * @return &amp;#123;promise&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;*/&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;fetch(&#39;/api/heros/, &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  method: &#39;GET&#39;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;更详情的请看文档啦：&lt;a href=&quot;http://devdocs.io/dom/globalfetch/fetch&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;globalfetch.fetch&lt;/a&gt; 。&lt;/p&gt;
+&lt;h2 id=&quot;u5E38_u7528_u4F8B_u5B50&quot;&gt;&lt;a href=&quot;#u5E38_u7528_u4F8B_u5B50&quot; class=&quot;headerlink&quot; title=&quot;常用例子&quot;&gt;&lt;/a&gt;常用例子&lt;/h2&gt;&lt;p&gt;看这个：&lt;a href=&quot;https://github.com/github/fetch#usage&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;fetch - usage&lt;/a&gt; 。&lt;/p&gt;
+&lt;h2 id=&quot;u53EF_u80FD_u9047_u5230_u7684_u5751&quot;&gt;&lt;a href=&quot;#u53EF_u80FD_u9047_u5230_u7684_u5751&quot; class=&quot;headerlink&quot; title=&quot;可能遇到的坑&quot;&gt;&lt;/a&gt;可能遇到的坑&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;不发送 cookie&lt;/li&gt;
+&lt;li&gt;不 catch 404 或者 500 等 HTTP 错误状态码。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;解决办法可以查看 &lt;a href=&quot;https://github.com/github/fetch#caveats&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;fetch - caveats&lt;/a&gt; 。&lt;/p&gt;
+&lt;h2 id=&quot;u62E6_u622A_u5668&quot;&gt;&lt;a href=&quot;#u62E6_u622A_u5668&quot; class=&quot;headerlink&quot; title=&quot;拦截器&quot;&gt;&lt;/a&gt;拦截器&lt;/h2&gt;&lt;p&gt;如果我们想在每个请求之前或者之后进行某些操作的话，就需要用到拦截器啦。&lt;br&gt;下面我们用到的是拦截器是 &lt;a href=&quot;https://github.com/werk85/fetch-intercept&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;fetch-intercept&lt;/a&gt; 。可以去看看源码，只有 80 行不到，超级优美的代码。&lt;/p&gt;
+&lt;p&gt;如果我们想每个请求都发送 cookie 的话，就必须要设置 &lt;a href=&quot;https://github.com/github/fetch#sending-cookies&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;credentials&lt;/a&gt; 。但是我不想每个请求都设置一遍，这时我们就可以用到拦截器啦。&lt;/p&gt;
+&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; fetchIntercept&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;fetchIntercept.register(&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  request(url, config = &amp;#123;&amp;#125;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    const myConf = &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      credentials: &lt;span class=&quot;string&quot;&gt;&#39;include&#39;&lt;/span&gt;, // send cookie&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    return [&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      url,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      defaults(config, myConf), // merge 2 objects&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;同样地，我们可以简化请求的 URL 。比如说，&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/rootHost/api/heros/&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/rootHost/api/coolBoys/&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个时候我们就可以把 &lt;code&gt;/rootHost/api/&lt;/code&gt; 提取出来。&lt;/p&gt;
+&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;fetchIntercept.register(&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  request(url, config = &amp;#123;&amp;#125;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; [&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     &lt;span class=&quot;string&quot;&gt;`&lt;span class=&quot;subst&quot;&gt;$&amp;#123;apiHost()&amp;#125;&lt;/span&gt;/api/&lt;span class=&quot;subst&quot;&gt;$&amp;#123;url&amp;#125;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     config,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;fetch(&#39;heros/&#39;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;fetch(&#39;coolBoys/&#39;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;类似地，我们也可以用在 GET 请求时带的 query string 。&lt;/p&gt;
+&lt;p&gt;另外，因为 fetch 不会 catch 404 等错误，所以需要我们手动设置。&lt;/p&gt;
+&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;fetchIntercept.register(&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  response(res) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (res.status &amp;gt;= &lt;span class=&quot;number&quot;&gt;200&lt;/span&gt; &amp;amp;&amp;amp; res.status &amp;lt; &lt;span class=&quot;number&quot;&gt;300&lt;/span&gt;) &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; res&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;Promise&lt;/span&gt;.reject(res.statusText)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;可以看到使用了拦截器之后，我们的代码就变得优美多了 :)&lt;/p&gt;
+&lt;h2 id=&quot;See_Also&quot;&gt;&lt;a href=&quot;#See_Also&quot; class=&quot;headerlink&quot; title=&quot;See Also&quot;&gt;&lt;/a&gt;See Also&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/github/fetch&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;whatwg-fetch&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/matthew-andrews/isomorphic-fetch&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;isomorphic-fetch&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/werk85/fetch-intercept&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;fetch-intercept&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;今天把 vue-resource 砍掉，换成了 &lt;a href=&quot;http://devdocs.io/dom/globalfetch/fetch&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;fetch&lt;/a&gt; 。&lt;br&gt;然而，代码体积在 build 之后
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>有趣的 Nginx</title>
@@ -1334,63 +1382,6 @@
       <category term="devtools" scheme="http://drakeleung.github.io/blog/tags/devtools/"/>
     
       <category term="google chrome" scheme="http://drakeleung.github.io/blog/tags/google-chrome/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Scope(1) - Nested Scope</title>
-    <link href="http://drakeleung.github.io/blog/2015/07/09/Scope-1-Nested-Scope/"/>
-    <id>http://drakeleung.github.io/blog/2015/07/09/Scope-1-Nested-Scope/</id>
-    <published>2015-07-09T10:24:19.000Z</published>
-    <updated>2016-01-27T06:27:09.049Z</updated>
-    
-    <content type="html">&lt;h2 id=&quot;What&quot;&gt;&lt;a href=&quot;#What&quot; class=&quot;headerlink&quot; title=&quot;What&quot;&gt;&lt;/a&gt;What&lt;/h2&gt;&lt;p&gt;&lt;em&gt;nested scope&lt;/em&gt;就是所谓的嵌套作用域, 顾名思义就是作用域之间具有嵌套的关系.&lt;br&gt;那么, 为什么我们需要的nested scope呢?&lt;/p&gt;
-&lt;h2 id=&quot;Why&quot;&gt;&lt;a href=&quot;#Why&quot; class=&quot;headerlink&quot; title=&quot;Why&quot;&gt;&lt;/a&gt;Why&lt;/h2&gt;&lt;p&gt;我们做出一下的假设:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;从头到尾只有一个socpe, 没有什么多个, 也没有什么嵌套关系.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;这样的话, 我们所有的变量声明, 函数声明都会放到这个&lt;strong&gt;唯一的scope&lt;/strong&gt;里面去. 那么, 当数量变大的时候, 程序的性能就会降低. 比如我们要在茫茫变量中找出一个小小的变量, 这性能不就降低了吗?&lt;/p&gt;
-&lt;p&gt;为了改进他, 我们又做出了以下的假设:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;其实不止一个socpe, 可以有多个scope. 但是scope之间美柚嵌套关系.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;很容易看出, 这次的假设比第一次的好多了. 但是问题又来了, 如果2个scope所存放的变量有很多是相同的, 既然是相同的, 那么我们很容易就想到要&lt;strong&gt;复用&lt;/strong&gt;他们. 怎么复用呢? 这个时候, 我们就给这些需要复用的scope加上一次嵌套关系:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;外部的scope嵌套着内部的scope, 内部的scope可以使用外部的scope的变量, 但反之不行!&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;这样以来, 我们就可以不同scope之间就可以共用相同的变量. 这是极好的~&lt;br&gt;但是, 我们要怎样才可以创建出多个scope呢?&lt;/p&gt;
-&lt;h2 id=&quot;How&quot;&gt;&lt;a href=&quot;#How&quot; class=&quot;headerlink&quot; title=&quot;How&quot;&gt;&lt;/a&gt;How&lt;/h2&gt;&lt;p&gt;在JavaScript中, 有3种不同的scope. 分别是&lt;strong&gt;global scope&lt;/strong&gt;, &lt;strong&gt;block scope&lt;/strong&gt;以及&lt;strong&gt;function scope&lt;/strong&gt;.&lt;/p&gt;
-&lt;h3 id=&quot;Global_Scope&quot;&gt;&lt;a href=&quot;#Global_Scope&quot; class=&quot;headerlink&quot; title=&quot;Global Scope&quot;&gt;&lt;/a&gt;Global Scope&lt;/h3&gt;&lt;p&gt;global scope(全局作用域)是不需要创建的, 只要你执行JavaScript文件的话, 他就被自动创建.&lt;/p&gt;
-&lt;p&gt;他是最外层的scope. 也就是说, 他可以嵌套其他作用域, 不可以被其他scope嵌套.&lt;/p&gt;
-&lt;p&gt;在浏览器环境下, global scope可以看做为&lt;code&gt;window&lt;/code&gt;这个对象.&lt;/p&gt;
-&lt;h3 id=&quot;Block_Scope&quot;&gt;&lt;a href=&quot;#Block_Scope&quot; class=&quot;headerlink&quot; title=&quot;Block Scope&quot;&gt;&lt;/a&gt;Block Scope&lt;/h3&gt;&lt;p&gt;block scope(块级作用域)指的是用&lt;code&gt;{}&lt;/code&gt;(大括号)创建一个scope. 也就是说, &lt;code&gt;{}&lt;/code&gt;内的变量定义和声明都是属于这个&lt;code&gt;{}&lt;/code&gt;所创建的scope.&lt;/p&gt;
-&lt;p&gt;在ES6中, 我们可以使用&lt;code&gt;let&lt;/code&gt;这个keyword来实现&lt;/p&gt;
-&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; foo = &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;built_in&quot;&gt;console&lt;/span&gt;.log(foo); &lt;span class=&quot;comment&quot;&gt;// 2&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;console&lt;/span&gt;.log(foo); &lt;span class=&quot;comment&quot;&gt;// Reference Error&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;但是, 在ES6之前呢? 我们要怎样才能创建一个block scope呢? 一个trick就是使用&lt;code&gt;try-catch&lt;/code&gt;.&lt;br&gt;&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;2&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (foo) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;built_in&quot;&gt;console&lt;/span&gt;.log(foo); &lt;span class=&quot;comment&quot;&gt;// 2&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;console&lt;/span&gt;.log(foo);  &lt;span class=&quot;comment&quot;&gt;// Error&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;在上面的例子中, &lt;code&gt;foo&lt;/code&gt;这个keyword只能在&lt;code&gt;catch&lt;/code&gt;块里面使用. 但是, 这种写法也太丑了. 因此, 在ES6之前可以说是没有block scope的.&lt;/p&gt;
-&lt;h2 id=&quot;Function_Scope&quot;&gt;&lt;a href=&quot;#Function_Scope&quot; class=&quot;headerlink&quot; title=&quot;Function Scope&quot;&gt;&lt;/a&gt;Function Scope&lt;/h2&gt;&lt;p&gt;当执行一个函数的时候, 就会创建一个属于这个函数的作用域. 当执行完这个函数之后, 理论上这个作用域是会被垃圾回收器回收的.&lt;/p&gt;
-&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;foo&lt;/span&gt; (&lt;span class=&quot;params&quot;&gt;&lt;/span&gt;) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; a = &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;bar&lt;/span&gt; (&lt;span class=&quot;params&quot;&gt;&lt;/span&gt;) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;console&lt;/span&gt;.log(a);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;在上面的例子中, 一个有3个scope. 分别是global scope &amp;gt; foo &amp;gt; bar(&lt;code&gt;&amp;gt;&lt;/code&gt;表示嵌套关系).&lt;br&gt;Engine和各个scope之间的对话.&lt;/p&gt;
-&lt;p&gt;Engine: 你好&lt;code&gt;bar scope&lt;/code&gt;, 我想要一个&lt;code&gt;a&lt;/code&gt;的RHS, 请问你有吗?&lt;br&gt;bar scope: 不好意思, 我没有. 你可以去问问我的外层作用域foo scope.&lt;br&gt;Engine: 你好&lt;code&gt;foo scope&lt;/code&gt;, 请问你有见过&lt;code&gt;a&lt;/code&gt;吗?&lt;br&gt;foo scope: 当然! 这就给你.&lt;br&gt;Engine: 那太好了. 既然找到的话, 我就不需要再向上层的作用域找了.  &lt;/p&gt;
-&lt;p&gt;从上面的对话中, 我们可以很容易知道: 当要查找一个变量的时候, 首先会在当前所在的作用域寻找, 如果没有找到的话, 就向上找, 直到global scope. 这个过程其实就叫做&lt;strong&gt;identifier resolution&lt;/strong&gt;(或者identifier look-up).&lt;/p&gt;
-&lt;p&gt;接下来, 我们再来优化一下上面的例子. 例子中的&lt;code&gt;bar&lt;/code&gt;函数只是为了打印一个&lt;code&gt;a&lt;/code&gt;, 我们以后再也不会引用到&lt;code&gt;bar&lt;/code&gt;这个变量名. 但这个变量却污染了foo scope. 有没有办法既可以打印&lt;code&gt;a&lt;/code&gt;又可以不创建一个变量名呢? 答案就是利用&lt;strong&gt;IIFE&lt;/strong&gt;(Immediately invoked function express).&lt;br&gt;&lt;figure class=&quot;highlight javascript&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;foo&lt;/span&gt; (&lt;span class=&quot;params&quot;&gt;&lt;/span&gt;) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; a = &lt;span class=&quot;number&quot;&gt;42&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  (&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;function&lt;/span&gt; (&lt;span class=&quot;params&quot;&gt;&lt;/span&gt;) &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;console&lt;/span&gt;.log(a);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;)();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;首先, 用&lt;code&gt;()&lt;/code&gt;包住整个function body就表明了这个是一个expression, 接着用&lt;code&gt;()&lt;/code&gt;来调用这个function expression.&lt;br&gt;对于IIFE还有其他写法, 你可以选择自己喜欢的口味~&lt;/p&gt;
-&lt;p&gt;IIFE是很常见的, 因为他在调用一个函数的同时也&lt;strong&gt;避免了作用域的污染&lt;/strong&gt;. 这是非常值得我们学习的.&lt;/p&gt;
-&lt;h2 id=&quot;Summary&quot;&gt;&lt;a href=&quot;#Summary&quot; class=&quot;headerlink&quot; title=&quot;Summary&quot;&gt;&lt;/a&gt;Summary&lt;/h2&gt;&lt;p&gt;总的来说, nested scope是为了可以共用作用域而产生的, 也就是说内部的scope可以访问外部scope. 而JavaScript有3种作用域global scope, block scope以及function scope. 其中, function scope是最主要的, 并且要懂得其中的IIFE.&lt;/p&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;What&quot;&gt;&lt;a href=&quot;#What&quot; class=&quot;headerlink&quot; title=&quot;What&quot;&gt;&lt;/a&gt;What&lt;/h2&gt;&lt;p&gt;&lt;em&gt;nested scope&lt;/em&gt;就是所谓的嵌套作用域, 顾名思义就是作用域之间具有嵌套的关系.&lt;br&gt;那么, 为什
-    
-    </summary>
-    
-      <category term="JavaScript" scheme="http://drakeleung.github.io/blog/categories/JavaScript/"/>
-    
-    
-      <category term="scope" scheme="http://drakeleung.github.io/blog/tags/scope/"/>
-    
-      <category term="作用域" scheme="http://drakeleung.github.io/blog/tags/%E4%BD%9C%E7%94%A8%E5%9F%9F/"/>
     
   </entry>
   
